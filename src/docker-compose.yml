@@ -1,0 +1,59 @@
+db_mariadb:
+    image: "mariadb:latest"
+    hostname: "mariadb"
+    ports: 
+        - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      
+db_mongodb:
+    image: "mongo"
+    hostname: "mongodb"
+    ports:
+        - "27017:27017"
+
+consul1:
+    image: "progrium/consul:latest"
+    hostname: "consul"
+    ports:
+        - "8400:8400"
+        - "8500:8500"
+        - "8600:53/udp"
+    command: "-server -bootstrap-expect 1 -ui-dir /ui"
+    
+registrator:
+    image: "gliderlabs/registrator"
+    hostname: "registrator"
+    volumes:
+     - "/var/run/docker.sock:/tmp/docker.sock"
+    links:
+     - consul1
+    command: -internal consul://consul:8500
+
+load_balancer_gate-way:
+  hostname: "GatewayLB"
+  container_name: "GatewayLB" 
+  build: ./docker-files/load-balancer
+  links:
+    - consul1
+    - registrator
+  ports:
+    - "80:80"
+  environment:
+    CONSUL_URL: consul:8500
+  volumes:
+    - ./docker-files/load-balancer/consul-template/templates/gate-way:/templates
+
+load_balancer_user_service:
+  hostname: "UserServiceLB"
+  container_name: "UserServiceLB" 
+  build: ./docker-files/load-balancer
+  links:
+    - consul1
+    - registrator
+  ports:
+    - "3100:80"
+  environment:
+    CONSUL_URL: consul:8500
+  volumes:
+    - ./docker-files/load-balancer/consul-template/templates/user-service:/templates

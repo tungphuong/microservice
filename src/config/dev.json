@@ -1,0 +1,16 @@
+{
+    "auth": {
+        "google": {
+            "clientID": "",
+            "clientSecret": "",
+            "urlhost": "http://localhost:3000/api/auth/google/callback"
+        }
+    },
+    "db": {
+        "userService": {
+            "host": "127.0.0.1",
+            "user": "root",
+            "password": "123456"
+        }
+    }
+}

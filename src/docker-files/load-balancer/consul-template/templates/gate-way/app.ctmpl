@@ -1,0 +1,36 @@
+server {
+  listen 65333;
+
+  location / {
+    types {
+      application/json json;
+    }
+    default_type "application/json";
+    return 501 '{
+      "success": false,
+      "deploy": false,
+      "status": 501,
+      "body": {
+        "message": "No available upstream servers at current route from consul"
+      }
+    }';
+  }
+}
+
+upstream gate_way {
+  least_conn;
+  {{range service "gate_way"}}server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
+  {{else}}server 172.17.0.1:3000; # force a 502{{end}}
+}
+
+server {
+  listen 80 default_server;
+
+  charset utf-8;
+
+  location / {
+    proxy_pass http://gate_way;
+    proxy_set_header Connection "";
+    proxy_http_version 1.1;
+  }
+}

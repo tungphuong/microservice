@@ -1,0 +1,26 @@
+{
+  "name": "geolocationsearch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "gateway-service": "cross-env NODE_ENV=dev PORT=3000 node gateway-service/src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.0",
+    "body-parser": "^1.15.1",
+    "config": "^1.20.4",
+    "consul": "^0.25.0",
+    "cross-env": "^1.0.8",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "passport": "^0.3.2",
+    "passport-google-oauth": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "pmx": "^0.6.2",
+    "seneca": "^2.1.0",
+    "winston": "^2.2.0"
+  }
+}
