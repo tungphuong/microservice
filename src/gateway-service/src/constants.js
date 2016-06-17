@@ -2,8 +2,8 @@
 
 let contants = {
     SERVICES: {
-        USER_SERVICE: 'microservice_load_balancer_user_service-80',
-        GATEWAY_SERVICE: 'microservice_load_balancer_gate_way-80'
+        USER_SERVICE: 'userservice',
+        GATEWAY_SERVICE: 'gateway'
     }
 };
 

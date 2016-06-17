@@ -2,14 +2,20 @@
 
 let Bluebird = require('bluebird');
 let Consul = require('consul');
+let config = require('config');
+
+let logger = require('./commonlog');
+let dummyService = require('../config/dummyservice');
 
 class ConsulClient {
     constructor() {
-        this.consulClient = new Consul({
-            host: '127.0.0.1',
-            port: 8500,
-            promisify: this.fromCallback
-        });
+        if (process.env.NODE_ENV !== 'development') {
+            this.consulClient = new Consul({
+                host: config.get('consul.ip'),
+                port: config.get('consul.port'),
+                promisify: this.fromCallback
+            });
+        }
     }
 
     fromCallback(fn) {
@@ -27,12 +33,25 @@ class ConsulClient {
             }
         });
     }
-    
-    getServiceInfo(serviceName){
-        return this.consulClient.catalog.service.nodes(serviceName)
-            .then((data, res)=>{
-                return data[0][0];
-            });
+
+    getServiceInfo(serviceName, port) {
+        if (process.env.NODE_ENV === 'development') {
+            let serviceObj = dummyService.find(x => x.serviceName == serviceName);
+            console.log(serviceObj);
+            if (serviceObj != undefined) {
+                return Promise.resolve(serviceObj);
+            }
+            else {
+                return Promise.reject(`cannot find serivce ${serviceName}`);
+            }
+        }
+        else {
+            let service = `microservice_loadbalancer${serviceName}-${port}`
+            return this.consulClient.catalog.service.nodes(service)
+                .then((data, res) => {
+                    return data[0][0];
+                });
+        }
     }
 }
 

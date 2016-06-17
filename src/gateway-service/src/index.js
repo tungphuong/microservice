@@ -29,6 +29,7 @@ process.on('SIGINT', () => {
     process.exit();
 });
 
+
 secure.setup(app);
 
 app.use(express.static( __dirname + '/../../client'));

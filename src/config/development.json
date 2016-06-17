@@ -9,8 +9,11 @@
     "db": {
         "userService": {
             "host": "127.0.0.1",
-            "user": "root",
+            "port": "3306",
+            "dbName": "user-service",
+            "userName": "root",
             "password": "123456"
         }
-    }
+    },
+    "jwtSecret": "123456"
 }

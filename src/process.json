@@ -4,13 +4,13 @@
             "name": "gateway-service",
             "script": "./gateway-service/src/index.js",
             "exec_mode": "folk",
-            "watch": true,
+            "watch": false,
             "env": {
                 "NODE_ENV": "development",
                 "PORT": 3000
             },
-            "env_production": {
-                "NODE_ENV": "production",
+            "env_docker": {
+                "NODE_ENV": "docker",
                 "PORT": 3000
             }
         },
@@ -18,14 +18,14 @@
             "name": "user-service",
             "script": "./user-service/src/index.js",
             "exec_mode": "folk",
-            "watch": true,
+            "watch": false,
             "env": {
                 "NODE_ENV": "development",
                 "PORT": 3101
             },
-            "env_production": {
-                "NODE_ENV": "production",
-                "PORT": 3101
+            "env_docker": {
+                "NODE_ENV": "docker",
+                "PORT": 3000
             }
         }
     ]

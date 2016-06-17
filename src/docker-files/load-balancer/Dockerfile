@@ -13,10 +13,8 @@ RUN rm -v /etc/nginx/conf.d/*.conf
 ADD https://releases.hashicorp.com/consul-template/0.14.0/consul-template_0.14.0_linux_amd64.zip /usr/bin/
 RUN unzip /usr/bin/consul-template_0.14.0_linux_amd64.zip -d /usr/local/bin
 
-
-
 VOLUME /templates
 
-EXPOSE 80
+#EXPOSE 80
 
-ENTRYPOINT ["/bin/start.sh"]
+#ENTRYPOINT ["/bin/start.sh"]

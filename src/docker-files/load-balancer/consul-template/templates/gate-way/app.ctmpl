@@ -17,10 +17,10 @@ server {
   }
 }
 
-upstream gate_way {
+upstream apigateway {
   least_conn;
-  {{range service "gate_way"}}server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
-  {{else}}server 172.17.0.1:3000; # force a 502{{end}}
+  {{range service "apigateway"}}server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
+  {{else}}server 127.0.0.1:65535; # force a 502{{end}}
 }
 
 server {
@@ -29,7 +29,7 @@ server {
   charset utf-8;
 
   location / {
-    proxy_pass http://gate_way;
+    proxy_pass http://apigateway;
     proxy_set_header Connection "";
     proxy_http_version 1.1;
   }

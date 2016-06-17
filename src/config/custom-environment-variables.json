@@ -1,0 +1,13 @@
+{
+    "consul": {
+        "ip": "CONSUL_PORT_8500_TCP_ADDR",
+        "port": "CONSUL_PORT_8500_TCP_PORT"
+    },
+    "db": {
+        "userService": {
+            "host": "DB_MARIADB_PORT_3306_TCP_ADDR",
+            "port": "DB_MARIADB_PORT_3306_TCP_PORT",
+            "password": "DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD"
+        }
+    }
+}

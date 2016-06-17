@@ -1,0 +1,18 @@
+{
+    "development": {
+        "host": "192.168.99.100",
+        "user": "root",
+        "password": "123456",
+        "database": "user-service",
+        "driver": "mysql",
+        "multipleStatements": true
+    },
+    "docker": {
+        "host": "127.0.0.1",
+        "user": "root",
+        "password": "123456",
+        "database": "user-service",
+        "driver": "mysql",
+        "multipleStatements": true
+    }
+}
