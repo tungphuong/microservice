@@ -29,7 +29,6 @@ seneca.ready(function (err) {
 	}
 
 	seneca.add({ role: 'userservice', cmd: 'ping' }, (args, done) => {
-		console.log('ping ...')
 		done(null, {
 			msg: 'pong'
 		})

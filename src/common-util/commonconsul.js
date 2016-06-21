@@ -5,7 +5,6 @@ let Consul = require('consul');
 let config = require('config');
 
 let logger = require('./commonlog');
-let dummyService = require('../config/dummyservice');
 
 class ConsulClient {
     constructor() {
@@ -36,19 +35,17 @@ class ConsulClient {
 
     getServiceInfo(serviceName, port) {
         if (process.env.NODE_ENV === 'development') {
-            let serviceObj = dummyService.find(x => x.serviceName == serviceName);
-            console.log(serviceObj);
-            if (serviceObj != undefined) {
-                return Promise.resolve(serviceObj);
-            }
-            else {
-                return Promise.reject(`cannot find serivce ${serviceName}`);
-            }
+            Promise.resolve({
+                serviceName: serviceName,
+                ServicePort: port,
+                ServiceAddress: '127.0.0.1'
+            });
         }
         else {
-            let service = `microservice_loadbalancer${serviceName}-${port}`
+            let service = `${serviceName}-${port}`;
             return this.consulClient.catalog.service.nodes(service)
                 .then((data, res) => {
+                    logger.log('info', data[0][0]);
                     return data[0][0];
                 });
         }

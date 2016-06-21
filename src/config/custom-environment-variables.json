@@ -1,7 +1,7 @@
 {
     "consul": {
-        "ip": "CONSUL_PORT_8500_TCP_ADDR",
-        "port": "CONSUL_PORT_8500_TCP_PORT"
+        "ip": "CONSUL1_PORT_8500_TCP_ADDR",
+        "port": "CONSUL1_PORT_8500_TCP_PORT"
     },
     "db": {
         "userService": {

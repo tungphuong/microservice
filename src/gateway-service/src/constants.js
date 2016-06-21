@@ -2,8 +2,8 @@
 
 let contants = {
     SERVICES: {
-        USER_SERVICE: 'userservice',
-        GATEWAY_SERVICE: 'gateway'
+        USER_SERVICE: 'loadbalanceruserservice',
+        USER_SERVICE_PORT: '3100'
     }
 };
 

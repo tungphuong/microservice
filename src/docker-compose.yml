@@ -1,100 +1,114 @@
+version: '2'
+
+services:
 #
 # Infrastructure
 #
-data:
-    image: "busybox"
-    volumes:
-    - /var/lib/mysql
-db_mariadb:
-    image: "mariadb:latest"
-    hostname: "mariadb"
-    ports: 
-    - "3306:3306"
-    environment:
-        MYSQL_ROOT_PASSWORD: 123456
-    volumes_from:
-    - data      
-# db_mongodb:
-#   image: "mongo"
-#   hostname: "mongodb"
-#   ports:
-#     - "27017:27017"
-consul1:
-    image: "progrium/consul:latest"
-    hostname: "consul"
-    ports:
-        - "8400:8400"
-        - "8500:8500"
-        - "8600:53/udp"
-    command: "-server -bootstrap-expect 1 -ui-dir /ui"
-registrator:
-    image: "gliderlabs/registrator"
-    hostname: "registrator"
-    volumes:
-     - "/var/run/docker.sock:/tmp/docker.sock"
-    links:
-     - consul1
-    command: -internal consul://consul:8500
+    data:
+        image: "busybox"
+        volumes:
+        - /home/jacky/mysqldata:/var/lib/mysql
 
+    db_mariadb:
+        image: "mariadb:latest"
+        hostname: "mariadb"
+        ports: 
+        - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+        volumes_from:
+        - data
+
+    # db_mongodb:
+    #   image: "mongo"
+    #   hostname: "mongodb"
+    #   ports:
+    #     - "27017:27017"
+
+    consul1:
+        image: "progrium/consul:latest"
+        hostname: "consul"
+        ports:
+            - "8400:8400"
+            - "8500:8500"
+            - "8600:53/udp"
+        command: "-server -bootstrap-expect 1 -ui-dir /ui"
+
+    registrator:
+        image: "gliderlabs/registrator"
+        hostname: "registrator"
+        volumes:
+        - "/var/run/docker.sock:/tmp/docker.sock"
+        depends_on:
+        - consul1
+        command: -internal consul://consul1:8500
 #
 # Micro service
 #
 #gateway LB
-loadbalancergateway:
-    hostname: "GatewayLB"
-    container_name: "GatewayLB" 
-    build: ./docker-files/load-balancer
-    links:
-    - consul1
-    - registrator
-    ports:
-    - "80:80"
-    environment:
-        CONSUL_URL: consul:8500
-    volumes:
-    - ./docker-files/load-balancer/consul-template/templates/gate-way:/templates
-    entrypoint:
-    - /bin/start.sh
+    loadbalancergateway:
+        container_name: "GatewayLB"
+        image: "me/loadbalancergateway" 
+        build: ./docker-files/load-balancer
+        depends_on:
+        - consul1
+        - registrator
+        ports:
+        - "80:80"
+        environment:
+            CONSUL_URL: consul1:8500           
+        volumes:
+        - ./docker-files/load-balancer/consul-template/templates/gate-way:/templates
+        entrypoint:
+        - /bin/start.sh
 #api gateway
-apigateway:
-    build: .
-    dockerfile: Dockerfile.apigateway
-    hostname: apigateway
-    ports:
-    - "3000"
-    links:
-    - "consul1:consul"
-    - "registrator"
-    environment:
-        SERVICE_NAME: apigateway
+    apigateway:
+        container_name: "apigateway"
+        image: "me/apigateway"
+        build:
+            context: .
+            dockerfile: Dockerfile.apigateway
+        hostname: apigateway
+        ports:
+        - "3000"
+        depends_on:
+        - consul1
+        - registrator
+        environment:
+            SERVICE_NAME: apigateway
+            CONSUL1_PORT_8500_TCP_ADDR: consul1
+            CONSUL1_PORT_8500_TCP_PORT: 8500
 #user service LB
-loadbalanceruserservice:
-    hostname: "UserServiceLB"
-    container_name: "UserServiceLB" 
-    build: ./docker-files/load-balancer
-    links:
-    - consul1
-    - registrator
-    # expose:
-    # - "3100"         
-    ports:
-    - "3100:3100"
-    environment:
-        CONSUL_URL: consul:8500
-    volumes:
-    - ./docker-files/load-balancer/consul-template/templates/user-service:/templates
-    entrypoint:
-    - /bin/start.sh
+    loadbalanceruserservice:
+        image: "me/loadbalanceruserservice"
+        container_name: "UserServiceLB" 
+        build: ./docker-files/load-balancer
+        depends_on:
+        - consul1
+        - registrator             
+        ports:
+        - "3100:3100"
+        environment:
+            CONSUL_URL: consul1:8500
+        volumes:
+        - ./docker-files/load-balancer/consul-template/templates/user-service:/templates
+        entrypoint:
+        - /bin/start.sh
 #user service
-userservice:
-    build: . 
-    dockerfile: Dockerfile.userservice
-    hostname: userservice
-    ports:
-    - "3000"
-    links:
-    - "consul1"
-    - "registrator"
-    - "db_mariadb"
-    environment:
-        SERVICE_NAME: userservice
+    userservice:
+        image: "me/userservice"
+        build:
+            context: .
+            dockerfile: Dockerfile.userservice        
+        hostname: userservice
+        ports:
+        - "3000"
+        depends_on:
+        - consul1
+        - registrator
+        - db_mariadb
+        environment:
+            #SERVICE_NAME: userservice
+            DB_MARIADB_PORT_3306_TCP_ADDR: db_mariadb
+            DB_MARIADB_PORT_3306_TCP_PORT: 3306
+            DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD: 123456

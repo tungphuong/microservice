@@ -23,10 +23,9 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
 })
 
-router.get('/test', (req, res, next) => {
-    consulClient.getServiceInfo(constants.SERVICES.USER_SERVICE, 3100)
-        .then((serviceInfo) => {
-            console.log(serviceInfo);
+router.get('/ping', (req, res, next) => {
+    consulClient.getServiceInfo(constants.SERVICES.USER_SERVICE, constants.SERVICES.USER_SERVICE_PORT)
+        .then((serviceInfo) => {            
             seneca.client({
                 port: serviceInfo.ServicePort,
                 host: serviceInfo.ServiceAddress,
