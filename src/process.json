@@ -27,6 +27,20 @@
                 "NODE_ENV": "docker",
                 "PORT": 3000
             }
+        },
+        {
+            "name": "communication-service",
+            "script": "./communication-service/src/index.js",
+            "exec_mode": "folk",
+            "watch": false,
+            "env": {
+                "NODE_ENV": "development",
+                "PORT": 3200
+            },
+            "env_docker": {
+                "NODE_ENV": "docker",
+                "PORT": 3000
+            }
         }
     ]
 }

@@ -1,11 +1,8 @@
 'use strict'
 
 class CommonUtil {
-    isBlank (valer) {
-        if (valer === null || valer === undefined || valer === '')
-            return true;
-        else
-            return false;
+    isBlank (value) {
+        return value === null ||  value === undefined || value === '';
     }
 }
 

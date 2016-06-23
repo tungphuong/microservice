@@ -35,8 +35,9 @@ secure.setup(app);
 app.use(express.static( __dirname + '/../../client'));
 
 app.use('/api/auth', require('./auth'));
+app.use('/api/communication', require('./communication'));
 
 app.use(pmx.expressErrorHandler());
 
 
-app.listen(3000);
+app.listen(process.env.PORT);

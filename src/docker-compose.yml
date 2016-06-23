@@ -1,5 +1,4 @@
 version: '2'
-
 services:
 #
 # Infrastructure
@@ -8,23 +7,24 @@ services:
         image: "busybox"
         volumes:
         - /home/jacky/mysqldata:/var/lib/mysql
-
     db_mariadb:
         image: "mariadb:latest"
         hostname: "mariadb"
-        ports: 
+        ports:
         - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: 123456
         volumes_from:
         - data
-
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        ports:
+        - "15672:15672" 
     # db_mongodb:
     #   image: "mongo"
     #   hostname: "mongodb"
     #   ports:
     #     - "27017:27017"
-
     consul1:
         image: "progrium/consul:latest"
         hostname: "consul"
@@ -33,7 +33,6 @@ services:
             - "8500:8500"
             - "8600:53/udp"
         command: "-server -bootstrap-expect 1 -ui-dir /ui"
-
     registrator:
         image: "gliderlabs/registrator"
         hostname: "registrator"
@@ -42,10 +41,10 @@ services:
         depends_on:
         - consul1
         command: -internal consul://consul1:8500
-#
-# Micro service
-#
-#gateway LB
+    #
+    # Micro service
+    #
+    #gateway LB
     loadbalancergateway:
         container_name: "GatewayLB"
         image: "me/loadbalancergateway" 
@@ -61,7 +60,7 @@ services:
         - ./docker-files/load-balancer/consul-template/templates/gate-way:/templates
         entrypoint:
         - /bin/start.sh
-#api gateway
+    #api gateway
     apigateway:
         container_name: "apigateway"
         image: "me/apigateway"
@@ -74,18 +73,24 @@ services:
         depends_on:
         - consul1
         - registrator
+        - rabbitmq
         environment:
-            SERVICE_NAME: apigateway
+            #SERVICE_NAME: apigateway
             CONSUL1_PORT_8500_TCP_ADDR: consul1
-            CONSUL1_PORT_8500_TCP_PORT: 8500
-#user service LB
+            CONSUL1_PORT_8500_TCP_PORT: 8500            
+            RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
+            RABBIT_MQ_PORT_5672_TCP_PORT: 5672
+            RABBIT_MQ_USER: guest
+            RABBIT_MQ_PASSWORD: guest
+    #user service LB
     loadbalanceruserservice:
         image: "me/loadbalanceruserservice"
         container_name: "UserServiceLB" 
         build: ./docker-files/load-balancer
         depends_on:
         - consul1
-        - registrator             
+        - registrator
+        - apigateway
         ports:
         - "3100:3100"
         environment:
@@ -94,7 +99,7 @@ services:
         - ./docker-files/load-balancer/consul-template/templates/user-service:/templates
         entrypoint:
         - /bin/start.sh
-#user service
+    #user service
     userservice:
         image: "me/userservice"
         build:
@@ -107,8 +112,27 @@ services:
         - consul1
         - registrator
         - db_mariadb
+        - loadbalanceruserservice
         environment:
             #SERVICE_NAME: userservice
             DB_MARIADB_PORT_3306_TCP_ADDR: db_mariadb
             DB_MARIADB_PORT_3306_TCP_PORT: 3306
             DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD: 123456
+    #communication service
+    communicationservice:
+        image: "me/communicationservice"
+        build:
+            context: .
+            dockerfile: Dockerfile.communicationservice        
+        hostname: communicationservice
+        ports:
+        - "3000"
+        depends_on:
+        - consul1
+        - registrator
+        - rabbitmq
+        environment:
+            RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
+            RABBIT_MQ_PORT_5672_TCP_PORT: 5672
+            RABBIT_MQ_USER: guest
+            RABBIT_MQ_PASSWORD: guest

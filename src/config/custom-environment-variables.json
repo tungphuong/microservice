@@ -9,5 +9,11 @@
             "port": "DB_MARIADB_PORT_3306_TCP_PORT",
             "password": "DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD"
         }
+    },
+    "rabbitmq":{
+        "host":"RABBIT_MQ_PORT_5672_TCP_ADDR",
+        "port": "RABBIT_MQ_PORT_5672_TCP_PORT",
+        "username":"RABBIT_MQ_USER",
+        "password":"RABBIT_MQ_PASSWORD"
     }
 }
