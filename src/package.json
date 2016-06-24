@@ -18,8 +18,9 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "jsonwebtoken": "^7.0.0",
+    "minimist": "^1.2.0",
     "moment": "^2.13.0",
-    "mongodb": "^2.1.21",
+    "mongodb": "^2.1.21",    
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
@@ -30,6 +31,6 @@
     "seneca-entity": "^1.0.0",
     "seneca-mongo-store": "^0.2.0",
     "seneca-mysql-store": "^0.4.1",
-    "winston": "^2.2.0"    
+    "winston": "^2.2.0"
   }
 }

@@ -119,20 +119,20 @@ services:
             DB_MARIADB_PORT_3306_TCP_PORT: 3306
             DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD: 123456
     #communication service
-    communicationservice:
-        image: "me/communicationservice"
-        build:
-            context: .
-            dockerfile: Dockerfile.communicationservice        
-        hostname: communicationservice
-        ports:
-        - "3000"
-        depends_on:
-        - consul1
-        - registrator
-        - rabbitmq
-        environment:
-            RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
-            RABBIT_MQ_PORT_5672_TCP_PORT: 5672
-            RABBIT_MQ_USER: guest
-            RABBIT_MQ_PASSWORD: guest
+    # communicationservice:
+    #     image: "me/communicationservice"
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile.communicationservice        
+    #     hostname: communicationservice
+    #     ports:
+    #     - "3000"
+    #     depends_on:
+    #     - consul1
+    #     - registrator
+    #     - rabbitmq
+    #     environment:
+    #         RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
+    #         RABBIT_MQ_PORT_5672_TCP_PORT: 5672
+    #         RABBIT_MQ_USER: guest
+    #         RABBIT_MQ_PASSWORD: guest

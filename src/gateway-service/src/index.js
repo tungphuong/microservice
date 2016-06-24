@@ -1,17 +1,43 @@
 "use strict";
 
-var pmx = require('pmx').init({
-    http: true, // HTTP routes logging (default: true)
-    ignore_routes: [/socket\.io/, /notFound/], // Ignore http routes with this pattern (Default: [])
-    errors: true, // Exceptions loggin (default: true)
-    custom_probes: true, // Auto expose JS Loop Latency and HTTP req/s as custom metrics
-    network: true, // Network monitoring at the application level
-    ports: true  // Shows which ports your app is listening on (default: false)
+let logger = require('../../common-util/commonlog');
+
+process.on('SIGTERM', () => {
+    logger.log('info', 'Closing SIGTERM');
 });
+
+process.on('SIGINT', () => {
+    logger.log('info', 'Closing SIGINT');
+    process.exit();
+});
+
+// always capture, log and exit on uncaught exceptions
+// your production system should auto-restart the app
+// this is the Node.js way
+process.on('uncaughtException', function (err) {
+    logger.log('error', 'uncaughtException:', err.message)
+    logger.log('error', err.stack)
+    process.exit(1)
+})
+
+
+let argv = require('minimist')(process.argv.slice(2));
+let env = argv.env || process.env['NODE_ENV'];
+
+// load the seneca module and create a new instance
+// note that module returns a function that constructs seneca instances (just like express)
+// so you if you call it right away (as here, with the final () ), you get a default instance
+let seneca = require('seneca')();
+seneca.use('seneca-amqp-transport')
+    .client({
+        type: 'amqp',
+        //url: `amqp://${config.get('rabbitmq.username')}:${config.get('rabbitmq.password')}@${config.get('rabbitmq.host')}:${config.get('rabbitmq.port')}`,
+        url: 'amqp://trungdt:123absoft.vn@pm.absoft.vn:5672',
+        pin: 'role:communicationservice'
+    });;
 
 let express = require('express');
 let bodyParser = require('body-parser');
-let logger = require('../../common-util/commonlog');
 let secure = require('./secure');
 
 let app = express();
@@ -20,24 +46,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
-process.on('SIGTERM', () => {
-    logger.log('info','Closing SIGTERM');
-});
-
-process.on('SIGINT', () => {
-    logger.log('info', 'Closing SIGINT');
-    process.exit();
-});
-
+app.use(seneca.export('web'));
 
 secure.setup(app);
 
-app.use(express.static( __dirname + '/../../client'));
+app.use(express.static(__dirname + '/../../client'));
 
 app.use('/api/auth', require('./auth'));
 app.use('/api/communication', require('./communication'));
 
-app.use(pmx.expressErrorHandler());
-
-
-app.listen(process.env.PORT);
+app.listen(process.env.PORT || 3000);

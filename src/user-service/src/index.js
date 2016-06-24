@@ -14,14 +14,14 @@ let seneca = require('seneca')();
 let logger = require('../../common-util/commonlog');
 
 seneca.use('entity');
-seneca.use('mysql-store', {
-	name: config.get('db.userService.dbName'),
-	host: config.get('db.userService.host'),
-	port: config.get('db.userService.port'),
-	user: config.get('db.userService.userName'),
-	password: config.get('db.userService.password'),
-	options: {}
-})
+// seneca.use('mysql-store', {
+// 	name: config.get('db.userService.dbName'),
+// 	host: config.get('db.userService.host'),
+// 	port: config.get('db.userService.port'),
+// 	user: config.get('db.userService.userName'),
+// 	password: config.get('db.userService.password'),
+// 	options: {}
+// })
 
 seneca.ready(function (err) {
 	if (err) {
