@@ -73,15 +73,18 @@ services:
         depends_on:
         - consul1
         - registrator
+        - loadbalancergateway
         - rabbitmq
         environment:
             #SERVICE_NAME: apigateway
-            CONSUL1_PORT_8500_TCP_ADDR: consul1
-            CONSUL1_PORT_8500_TCP_PORT: 8500            
+            # # CONSUL1_PORT_8500_TCP_ADDR: consul1
+            # # CONSUL1_PORT_8500_TCP_PORT: 8500            
             RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
             RABBIT_MQ_PORT_5672_TCP_PORT: 5672
             RABBIT_MQ_USER: guest
             RABBIT_MQ_PASSWORD: guest
+            USER_SERVICE_LB_PORT_3100_TCP_ADDR: loadbalanceruserservice
+            USER_SERVICE_LB_PORT_3100_TCP_PORT: 3100
     #user service LB
     loadbalanceruserservice:
         image: "me/loadbalanceruserservice"
@@ -109,8 +112,8 @@ services:
         ports:
         - "3000"
         depends_on:
-        - consul1
-        - registrator
+        # # - consul1
+        # # - registrator
         - db_mariadb
         - loadbalanceruserservice
         environment:
@@ -119,20 +122,20 @@ services:
             DB_MARIADB_PORT_3306_TCP_PORT: 3306
             DB_MARIADB_ENV_MYSQL_ROOT_PASSWORD: 123456
     #communication service
-    # communicationservice:
-    #     image: "me/communicationservice"
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile.communicationservice        
-    #     hostname: communicationservice
-    #     ports:
-    #     - "3000"
-    #     depends_on:
-    #     - consul1
-    #     - registrator
-    #     - rabbitmq
-    #     environment:
-    #         RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
-    #         RABBIT_MQ_PORT_5672_TCP_PORT: 5672
-    #         RABBIT_MQ_USER: guest
-    #         RABBIT_MQ_PASSWORD: guest
+    communicationservice:
+        image: "me/communicationservice"
+        build:
+            context: .
+            dockerfile: Dockerfile.communicationservice        
+        hostname: communicationservice
+        ports:
+        - "3000"
+        depends_on:
+        # # - consul1
+        # # - registrator
+        - rabbitmq
+        environment:
+            RABBIT_MQ_PORT_5672_TCP_ADDR: rabbitmq
+            RABBIT_MQ_PORT_5672_TCP_PORT: 5672
+            RABBIT_MQ_USER: guest
+            RABBIT_MQ_PASSWORD: guest

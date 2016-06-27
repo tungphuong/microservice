@@ -20,9 +20,7 @@ process.on('uncaughtException', function (err) {
     process.exit(1)
 })
 
-
-let argv = require('minimist')(process.argv.slice(2));
-let env = argv.env || process.env['NODE_ENV'];
+let config = require('config');
 
 // load the seneca module and create a new instance
 // note that module returns a function that constructs seneca instances (just like express)
@@ -31,10 +29,14 @@ let seneca = require('seneca')();
 seneca.use('seneca-amqp-transport')
     .client({
         type: 'amqp',
-        //url: `amqp://${config.get('rabbitmq.username')}:${config.get('rabbitmq.password')}@${config.get('rabbitmq.host')}:${config.get('rabbitmq.port')}`,
-        url: 'amqp://trungdt:123absoft.vn@pm.absoft.vn:5672',
+        url: `amqp://${config.get('rabbitmq.username')}:${config.get('rabbitmq.password')}@${config.get('rabbitmq.host')}:${config.get('rabbitmq.port')}`,
         pin: 'role:communicationservice'
-    });;
+    })
+    .client({        
+        port: config.get('env.loadbalance.userservice_port'),
+        host: config.get('env.loadbalance.userservice_host'),
+        pin: { role: 'userservice', cmd: '*' }
+    });
 
 let express = require('express');
 let bodyParser = require('body-parser');
@@ -55,4 +57,4 @@ app.use(express.static(__dirname + '/../../client'));
 app.use('/api/auth', require('./auth'));
 app.use('/api/communication', require('./communication'));
 
-app.listen(process.env.PORT || 3000);
+app.listen(config.get('env.port.gatewayservice') || 3000);

@@ -1,0 +1,36 @@
+{
+    "env": {
+        "port": {
+            "gatewayservice": 3001,
+            "userservice": 3101,
+            "communicationservice": 3201
+        },
+        "loadbalance":{
+            "userservice_host": "127.0.0.1",
+            "userservice_port": "3101"
+        }
+    },
+    "auth": {
+        "google": {
+            "clientID": "",
+            "clientSecret": "",
+            "urlhost": "http://localhost:3000/api/auth/google/callback"
+        }
+    },
+    "db": {
+        "userService": {
+            "host": "192.168.99.100",
+            "port": "3306",
+            "dbName": "user-service",
+            "userName": "root",
+            "password": "123456"
+        }
+    },
+    "rabbitmq": {
+        "host": "192.168.99.100",
+        "port": "5672",
+        "username": "guest",
+        "password": "guest"
+    },
+    "jwtSecret": "123456"
+}

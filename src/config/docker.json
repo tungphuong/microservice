@@ -1,16 +1,9 @@
 {
-    "auth": {
-        "google": {
-            "clientID": "",
-            "clientSecret": "",
-            "urlhost": "http://localhost:3000/api/auth/google/callback"
-        }
-    },    
-    "db": {
-        "userService": {                        
-            "dbName": "user-service",
-            "userName": "root"
-        }
-    },
-    "jwtSecret": "123456"
+     "env": {
+        "port": {
+            "gatewayservice": 3000,
+            "userservice": 3000,
+            "communicationservice": 3000
+        }      
+    }    
 }

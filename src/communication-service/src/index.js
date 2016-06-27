@@ -22,8 +22,7 @@ seneca.ready(function (err) {
 
     seneca.listen({
         type: 'amqp',
-        //url: `amqp://${config.get('rabbitmq.username')}:${config.get('rabbitmq.password')}@${config.get('rabbitmq.host')}:${config.get('rabbitmq.port')}`,
-        url: 'amqp://trungdt:123absoft.vn@pm.absoft.vn:5672',
+        url: `amqp://${config.get('rabbitmq.username')}:${config.get('rabbitmq.password')}@${config.get('rabbitmq.host')}:${config.get('rabbitmq.port')}`,
         pin: 'role:communicationservice'
     });
 })

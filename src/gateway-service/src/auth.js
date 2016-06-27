@@ -1,14 +1,13 @@
 "use strict";
 
 let commonCrypt = require('../../common-util/commoncrypt');
-let consulClient = require('../../common-util/commonconsul');
+//let consulClient = require('../../common-util/commonconsul');
 let constants = require('./constants');
 
 let express = require('express');
 let router = express.Router();
 let passport = require('passport');
 let path = require('path');
-let seneca = require('seneca')();
 
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
@@ -24,19 +23,13 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/ping', (req, res, next) => {
-    consulClient.getServiceInfo(constants.SERVICES.USER_SERVICE, constants.SERVICES.USER_SERVICE_PORT)
-        .then((serviceInfo) => {            
-            seneca.client({
-                port: serviceInfo.ServicePort,
-                host: serviceInfo.ServiceAddress,
-            }).act({ role: 'userservice', cmd: 'ping' }, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.statusCode(500).json(err);
-                }
-                res.json(result);
-            });
-        });
+    req.seneca.act({ role: 'userservice', cmd: 'ping' }, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.statusCode(500).json(err);
+        }
+        res.json(result);
+    });    
 })
 
 module.exports = router;

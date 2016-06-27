@@ -1,27 +1,19 @@
 "use strict";
 
-// var pmx = require('pmx').init({
-//   http: true, // HTTP routes logging (default: true)
-//   ignore_routes: [/socket\.io/, /notFound/], // Ignore http routes with this pattern (Default: [])
-//   errors: true, // Exceptions loggin (default: true)
-//   custom_probes: true, // Auto expose JS Loop Latency and HTTP req/s as custom metrics
-//   network: true, // Network monitoring at the application level
-//   ports: true  // Shows which ports your app is listening on (default: false)
-// });
 let config = require('config');
 let seneca = require('seneca')();
 
 let logger = require('../../common-util/commonlog');
 
 seneca.use('entity');
-// seneca.use('mysql-store', {
-// 	name: config.get('db.userService.dbName'),
-// 	host: config.get('db.userService.host'),
-// 	port: config.get('db.userService.port'),
-// 	user: config.get('db.userService.userName'),
-// 	password: config.get('db.userService.password'),
-// 	options: {}
-// })
+seneca.use('mysql-store', {
+	name: config.get('db.userService.dbName'),
+	host: config.get('db.userService.host'),
+	port: config.get('db.userService.port'),
+	user: config.get('db.userService.userName'),
+	password: config.get('db.userService.password'),
+	options: {}
+})
 
 seneca.ready(function (err) {
 	if (err) {
@@ -29,7 +21,7 @@ seneca.ready(function (err) {
 	}
 
 	seneca.add({ role: 'userservice', cmd: 'ping' }, (args, done) => {
-		logger.log('info', '/ping');
+		logger.log('info', '/userservice/ping');
 		done(null, {
 			msg: 'pong'
 		})
@@ -63,6 +55,7 @@ seneca.ready(function (err) {
 	});
 
 	seneca.listen({
-		port: process.env.PORT
+		port: config.get('env.port.userservice') || 3000,
+		pin: { role: 'userservice', cmd: '*' }
 	})
 })

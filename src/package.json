@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gateway-service": "cross-env NODE_ENV=docker PORT=3001 node gateway-service/src/index.js",
-    "user-service": "cross-env NODE_ENV=docker PORT=3002 node user-service/src/index.js"
+    "gateway-service": "cross-env NODE_ENV=development node gateway-service/src/index.js",
+    "user-service": "cross-env NODE_ENV=development node user-service/src/index.js",
+    "communication-service": "cross-env NODE_ENV=development node communication-service/src/index.js"
   },
   "author": "",
   "license": "ISC",

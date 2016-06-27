@@ -3,6 +3,12 @@
         "ip": "CONSUL1_PORT_8500_TCP_ADDR",
         "port": "CONSUL1_PORT_8500_TCP_PORT"
     },
+    "env": {      
+        "loadbalance":{
+            "userservice_host": "USER_SERVICE_LB_PORT_3100_TCP_ADDR",
+            "userservice_port": "USER_SERVICE_LB_PORT_3100_TCP_PORT"
+        }
+    },
     "db": {
         "userService": {
             "host": "DB_MARIADB_PORT_3306_TCP_ADDR",

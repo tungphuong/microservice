@@ -6,12 +6,10 @@
             "exec_mode": "folk",
             "watch": false,
             "env": {
-                "NODE_ENV": "development",
-                "PORT": 3000
+                "NODE_ENV": "development"
             },
             "env_docker": {
-                "NODE_ENV": "docker",
-                "PORT": 3000
+                "NODE_ENV": "docker"
             }
         },
         {
@@ -20,12 +18,10 @@
             "exec_mode": "folk",
             "watch": false,
             "env": {
-                "NODE_ENV": "development",
-                "PORT": 3100
+                "NODE_ENV": "development"
             },
             "env_docker": {
-                "NODE_ENV": "docker",
-                "PORT": 3000
+                "NODE_ENV": "docker"
             }
         },
         {
@@ -34,12 +30,10 @@
             "exec_mode": "folk",
             "watch": false,
             "env": {
-                "NODE_ENV": "development",
-                "PORT": 3200
+                "NODE_ENV": "development"
             },
             "env_docker": {
-                "NODE_ENV": "docker",
-                "PORT": 3000
+                "NODE_ENV": "docker"
             }
         }
     ]
